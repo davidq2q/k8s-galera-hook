@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -81,17 +82,16 @@ func main() {
 
 	log.Print("K8S | Info: Launching galera script in background")
 
-	cmd := exec.Command("/bin/sh", scriptpath)
+	cmd := exec.Command("start.sh", "node", fmt.Sprintf("seed,%s", os.Getenv("SEED_ADDRESS")))
 
 	if err := cmd.Start(); err != nil {
 		log.Fatalf("K8S | Error: %v", err)
-		return
 	}
 
-	log.Print("K8S | Info: Running input script")
+	log.Print("K8S | Info: State checker active")
+	check()
 
 	if err := cmd.Wait(); err != nil {
-		log.Fatal(err)
-		return
+		log.Printf("K8S | Error: %v", err)
 	}
 }
