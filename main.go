@@ -11,6 +11,7 @@ import (
 )
 
 const sleep = 5
+const bssleep = 120
 
 var scriptpath string
 
@@ -38,7 +39,11 @@ func check() {
 
 		if bodyString == "Galera Cluster Node status: synced" {
 			log.Print("K8S | Info: Synced state reached")
-			cmd := exec.Command("/bin/sh", scriptpath)
+
+			log.Print("K8S | Info: SST bootstrap cooldown")
+			time.Sleep(bssleep * time.Second)
+
+			cmd := exec.Command(scriptpath)
 
 			if err := cmd.Start(); err != nil {
 				log.Fatalf("K8S | Error: %v", err)
